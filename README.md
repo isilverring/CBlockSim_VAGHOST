@@ -64,3 +64,5 @@ The `res/` directory intentionally contains only analysis scripts in this packag
 ## Reference
 
 The base simulator originates from CBlockSim. This package extends it for visibility-aware fork-choice experiments.
+
+Abdulwahab Almusailem, Othman Alenezi, and Ameer Mohammed, **“Visibility-Aware GHOST: Mitigating Visibility Asymmetry in Subtree-Based Proof-of-Work Consensus,”** in *Applied Cryptography and Network Security — ACNS 2026*, Springer LNCS, 2026.
