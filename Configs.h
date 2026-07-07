@@ -5,19 +5,19 @@ constexpr auto DATA = false;
 constexpr auto NETWORK = true;
 constexpr auto FLAG = 1; //0 for Bitcoin, 1 for Ethereum
 constexpr auto PROPAGATION_POLICY = 1; //0 for CBR, 1 for Eth Wire
-constexpr auto FINALIZE_POLICY = 0; //0 for Longest rule, 1 for GHOST rule
+constexpr auto FINALIZE_POLICY = 2; //0 for Longest rule, 1 for GHOST rule, 2 for VA-GHOST rule
 constexpr auto PROPOSAL_POLICY = 0; //0 for PoW, 1 for PoS
 
 constexpr auto GENERATE_BLOCK = 0;
 constexpr auto RECEIVE_BLOCK = 1;
 constexpr auto INF = 100000.0;
-constexpr auto ROUND = 10;
+constexpr auto ROUND = 1;
 
-constexpr auto NODES_NUM = 8223;//11000;
-constexpr auto BLOCK_INTERVAL = 13.05;//8;
+constexpr auto NODES_NUM = 1000;//11000;
+constexpr auto BLOCK_INTERVAL = 2;//8;
 constexpr auto BLOCK_VALIDATION = 0.34; // for 1Mb block
 constexpr auto BLOCK_SIZE = 0.18;//0.8;  // Mb
-constexpr auto SIM_TIME = 86400;//246857.0;//86400.0;//6600000;//3600;//86400.0;    // s
+constexpr auto SIM_TIME = 6000;//246857.0;//86400.0;//6600000;//3600;//86400.0;    // s
 constexpr auto AVER_DELAY = 0.7;// s
 
 constexpr auto TX_PER_SEC = 8;
@@ -50,3 +50,12 @@ extern const int MAX_DISTANCE;  // from "Simple, distance-dependent formulation 
 
 constexpr auto BLOCK_REWARD = 12.5;
 constexpr auto UNCLE_REWARD = BLOCK_REWARD/32;
+
+// Attack / adversary configuration
+constexpr auto ATTACK_SCENARIO      = 1;      // 0 = no attacker, 1 = withhold-and-release coalition
+constexpr auto ADVERSARY_FRACTION   = 0.30;   // target adversarial HASH-POWER share (not node count)
+constexpr auto ATTACK_HOLD_TIME     = 10.0;   // maximum withholding horizon before forced release
+constexpr auto ATTACK_RELEASE_LEAD  = 2;      // release once private lead reaches this depth advantage
+constexpr auto ATTACKER_SELECT_SEED = 1337;   // deterministic attacker-coalition selection
+constexpr auto HASH_ASSIGN_SEED     = 4242;   // deterministic hash-power assignment
+

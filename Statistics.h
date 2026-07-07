@@ -9,7 +9,18 @@ public:
     Statistics();
     ~Statistics();
 
-    void write(int rd, double execTime, double blockTime, double blockSize, int mainBlocks, int orphans, double halfBPD, double ninetyBPD, double rate);
+    void write(int rd,
+               double execTime,
+               double blockTime,
+               double blockSize,
+               int mainBlocks,
+               int orphans,
+               double halfBPD,
+               double ninetyBPD,
+               double rate,
+               double avgReorgDepth,
+               int maxReorgDepth,
+               int reorgCount);
 
     ofstream output;
 };

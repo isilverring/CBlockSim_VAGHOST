@@ -1,0 +1,47 @@
+# CMake / build outputs
+build/
+build_*/
+cmake-build-*/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+compile_commands.json
+CTestTestfile.cmake
+Testing/
+
+# Compiled binaries / objects
+*.o
+*.obj
+*.a
+*.so
+*.dylib
+*.dll
+*.exe
+*.out
+CBlockSim
+
+# Generated simulation outputs
+output.csv
+node_stats.csv
+res/output_*.csv
+res/node_stats_*.csv
+res/summary_*.csv
+res/*_comparison_*.png
+res/OG/
+
+# Temporary files made by run_all_scenarios.sh
+*.bak.runall
+
+# Python cache / local env
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/

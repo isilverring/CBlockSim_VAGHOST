@@ -3,6 +3,7 @@
 #include <queue>
 #include <vector>
 #include <iostream>
+#include <algorithm>
 
 // Returns the connection probability between two nodes.
 double getPij(double dens, double prop, int maxDis, int i, int j)
@@ -51,6 +52,8 @@ void TopologyFactory::ProduceSmallWorldTopo(int maxDis, double prop, double dens
 
 void TopologyFactory::ProduceNodesByDistrib(std::vector<unique_ptr<Node>>& nodePool, double topo[NODES_NUM][NODES_NUM])
 {
+    totalHash = 0.0;
+
     int numsArr[REGIONS_NUM];
     unsigned int total = 0, id = 0;
     for (int i = 0; i < REGIONS_NUM - 1; i++) {
@@ -58,6 +61,7 @@ void TopologyFactory::ProduceNodesByDistrib(std::vector<unique_ptr<Node>>& nodeP
         total += numsArr[i];
     }
     numsArr[REGIONS_NUM - 1] = NODES_NUM - total;
+
     for (int i = 0; i < REGIONS_NUM; i++) {
         for (int j = 0; j < numsArr[i]; j++) {
             auto node = make_unique<Node>();
@@ -67,6 +71,7 @@ void TopologyFactory::ProduceNodesByDistrib(std::vector<unique_ptr<Node>>& nodeP
             id++;
         }
     }
+
     for (int i = 0; i < NODES_NUM; i++) {
         for (int j = 0; j < NODES_NUM; j++) {
             if (topo[i][j] != INF) {
@@ -76,23 +81,45 @@ void TopologyFactory::ProduceNodesByDistrib(std::vector<unique_ptr<Node>>& nodeP
         }
     }
 
-    // Hash Power falls in Gaussian distribution
-    default_random_engine gen;
-    normal_distribution<double> dis(5,1);
-    for (int i=0; i < NODES_NUM; i++) {
-        nodePool[i]->hashPower = dis(gen);
-        totalHash += nodePool[i]->hashPower;
+    // Hash power assignment (deterministic seed for reproducible experiments).
+    std::mt19937 gen(HASH_ASSIGN_SEED);
+    std::normal_distribution<double> dis(5.0, 1.0);
+
+    for (int i = 0; i < NODES_NUM; i++) {
+        double hp = std::max(0.1, dis(gen));
+        nodePool[i]->hashPower = hp;
+        totalHash += hp;
     }
-    double tmp = 0;
-    for (int i=0; i < NODES_NUM-1; i++) {
+
+    double tmp = 0.0;
+    for (int i = 0; i < NODES_NUM - 1; i++) {
         nodePool[i]->hashPower /= totalHash;
         tmp += nodePool[i]->hashPower;
     }
-    nodePool[NODES_NUM-1]->hashPower = 1 - tmp;
+    nodePool[NODES_NUM - 1]->hashPower = 1.0 - tmp;
+
 
     // Stake falls in Gaussian distribution
-    for (int i=0; i < NODES_NUM; i++) {
-        nodePool[i]->stake = dis(gen);
+    for (int i = 0; i < NODES_NUM; i++) {
+        nodePool[i]->stake = std::max(0.1, dis(gen));
         nodePool[i]->stakeTime = 0;
+    }
+
+    // Adversaries are selected by TARGET HASH-POWER SHARE, not by raw node count.
+    for (int i = 0; i < NODES_NUM; ++i) {
+        nodePool[i]->isAttacker = false;
+    }
+
+    std::vector<int> ids;
+    ids.reserve(NODES_NUM);
+    for (int i = 0; i < NODES_NUM; ++i) ids.push_back(i);
+    std::mt19937 attackerGen(ATTACKER_SELECT_SEED);
+    std::shuffle(ids.begin(), ids.end(), attackerGen);
+
+    double advHash = 0.0;
+    for (int idx : ids) {
+        if (advHash + 1e-12 >= ADVERSARY_FRACTION) break;
+        nodePool[idx]->isAttacker = true;
+        advHash += nodePool[idx]->hashPower;
     }
 }

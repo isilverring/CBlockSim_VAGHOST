@@ -7,7 +7,20 @@ Statistics::Statistics()
     if(stat("output.csv", &buffer) == 0) output.open("output.csv", ios::app);
     else {
         output.open("output.csv", ios::out);
-        output << "Round" << "," << "Execution Time" << "," << "Block Time" << "," << "Block Size" << "," << "#Mainchain Blocks" << "," << "#Stale/Uncle Blocks" << "," << "50% Block Propagation Delay" << "," << "90% Block Propagation Delay" << "," << "Stale/Uncle Rate" << endl;
+        output
+            << "Round" << ","
+            << "Execution Time" << ","
+            << "Block Time" << ","
+            << "Block Size" << ","
+            << "#Mainchain Blocks" << ","
+            << "#Stale/Uncle Blocks" << ","
+            << "50% Block Propagation Delay" << ","
+            << "90% Block Propagation Delay" << ","
+            << "Stale/Uncle Rate" << ","
+            << "Avg Reorg Depth" << ","
+            << "Max Reorg Depth" << ","
+            << "Reorg Count"
+            << endl;
     }
 }
 
@@ -16,7 +29,29 @@ Statistics::~Statistics()
     output.close();
 }
 
-void Statistics::write(int rd, double execTime, double blockTime, double blockSize, int mainBlocks, int orphans, double halfBPD, double ninetyBPD, double rate)
+void Statistics::write(int rd,
+                       double execTime,
+                       double blockTime,
+                       double blockSize,
+                       int mainBlocks,
+                       int orphans,
+                       double halfBPD,
+                       double ninetyBPD,
+                       double rate,
+                       double avgReorgDepth,
+                       int maxReorgDepth,
+                       int reorgCount)
 {
-    output << rd << "," << execTime << "," << blockTime << "," << blockSize << "," << mainBlocks << "," << orphans << "," << halfBPD << "," << ninetyBPD << "," << rate << endl;
+    output << rd           << ","
+           << execTime     << ","
+           << blockTime    << ","
+           << blockSize    << ","
+           << mainBlocks   << ","
+           << orphans      << ","
+           << halfBPD      << ","
+           << ninetyBPD    << ","
+           << rate         << ","
+           << avgReorgDepth<< ","
+           << maxReorgDepth<< ","
+           << reorgCount   << endl;
 }

@@ -1,56 +1,66 @@
-# A High-Performance Blockchain Simulator
+# CBlockSim + VA-GHOST Research Prototype
 
-[![arXiv](https://img.shields.io/badge/arXiv-2203.05788-f9f107.svg)](https://arxiv.org/abs/2203.05788)</br></br>
-## Introduction</br>
-CBlockSim is an open source blockchain simulator extended from BlockSim: Alharby. We migrate BlockSim from Python to C++. Using bitwise operation supported by C++, we speed up the simulation process a lot. Moreover, we add a module to simulate the real network so that the simulator can be used to do experiments related to the overlay network of blockchain, for example testing gossip protocols of Bitcoin or Ethereum.</br></br>
+This package contains a research-oriented extension of CBlockSim with a substantially tighter **VA-GHOST** implementation than the earlier chain-score approximation.
 
-## Configure</br>
-Users can configure blockchain via editing Config.h and Config.cpp</br></br>
+## What is implemented
 
-## Modules</br>
-Users can modify some components of blockchain easily. Modules can be found in Policy folder and Factories folder.</br>
-The Policy folder contains two types of policies now, one for block and another one for transaction.</br>
-The Factories folder contains topology generation and transaction generation.</br></br>
+The simulator now includes:
 
-### 1. Block Policy: BlockPolicy.h, BlockPolicy.cpp</br>
-#### (1) *LoadPoW* and *LoadPoS*</br>
-Describe how to simulate block generation，corresponding to Block Proposal in paper.<br>
-PoW and a simple PoS have been included, both using exponential distribution.<br>
-#### (2) *LoadBitcoinPropagation* and *LoadEthereumPropagation*</br>
-Describe block propagation protocol, corresponding to Information Propagation in paper.<br>
-The protocols of Bitcoin, i.e. CBR, and Ethereum, i.e. Eth Wire Protocol have been simulated. Users can add new function to implement different propagation protocols.<br>
-#### (3) *LoadLongestRule* and *LoadGHOSTRule* </br>
-Describe how to finalize blockchain, corresponding to Block Finalization in paper. </br>
-The longest rule and GHOST rule have been included. Users can add new function to create new finalization rule.<br><br>
+- **node-local block-DAG state** at each node (`knownBlocks`, `childBlocks`)
+- **visibility counters** updated from received blocks and embedded certificates
+- **bounded visibility certificates** constructed deterministically from the miner's local view
+- **visibility-weighted subtree scoring** consistent with the paper's definition
+- **greedy VA-GHOST head selection** recomputed on block receipt
+- **adversarial withholding coalition support** with attacker selection by **hash-power share** rather than node count
+- **delayed/strategic release** of privately mined blocks
 
-### 2. Transaction Policy: TransactionPolicy.h, TransactionPolicy.cpp</br>
-#### (1) *PropagationTxn*</br>
-Describe how to propagate transactions.<br>
-#### (2) *LoadEthereumTxnSelection* and *LoadBitcoinTxnSelection*</br>
-Describe how each miner selects transactions to include in the new block.</br>
-Miners select transaction based on gas price in Ethereum and based on transaction fee in Bitcoin. </br>
-#### (3) *LoadLongestRule* and *LoadGHOSTRule* </br>
-Describe how to finalize blockchain, corresponding to Block Finalization in paper. </br>
-The longest rule and GHOST rule have been included. Users can add new function to create new finalization rule.</br>
+## Important modeling note
 
-### 3. Topology Generation: TopologyFactory.h, TopologyFactory.cpp</br>
+This is a **research prototype**, not a production blockchain client. It is designed to study the behavior of visibility-aware fork choice under controlled network and attack settings.
 
-#### (1) *ProduceCompleteTopo*</br>
-Generate a complete graph topology.<br>
-#### (2) *ProduceSmallWorldTopo*</br>
-Generate a small-world topology. See reference "Simple, distance-dependent formulation of the Watts-Strogatz model for directed and undirected small-world networks".
-<br>
-### 4. Transaction Generation: TransactionFactory.h, TransactionFactory.cpp</br>
+## Build
 
-Generate transactions based on average values, i.e. gas limit, used gas and so on, observed in blockchain. Users can modify this part to add more randomness or build transaction based on real transaction data. <br><br>
+```bash
+mkdir -p build_research
+cd build_research
+cmake ..
+make -j"$(nproc)"
+```
 
-## How to use</br>
-cd build/<br>
-bash start.sh</br></br>
+Or simply:
 
-## Result </br>
-see build/output.csv
+```bash
+bash run_research.sh
+```
 
-## Publication </br>
-The CBlockSim paper has been accepted by IEEE International Conference on Blockchain and Cryptocurrency 2022.
+## Batch experiments
 
+To run the standard A/B/C/D scenario suite:
+
+```bash
+bash run_all_scenarios.sh
+```
+
+Useful options:
+
+```bash
+RUNS=5 bash run_all_scenarios.sh
+SCENARIOS=A,C bash run_all_scenarios.sh
+NO_ANALYZE=1 bash run_all_scenarios.sh
+```
+
+## Results directory
+
+The `res/` directory intentionally contains only analysis scripts in this package. Historical CSV/PNG artifacts from earlier approximations were removed to avoid accidental reuse. Re-run the experiments after this implementation change before using any results in a manuscript.
+
+## Files of interest
+
+- `Policy/BlockPolicy.cpp` / `.h` — VA-GHOST fork-choice logic
+- `Models/Node.cpp` / `.h` — node-local DAG state and visibility counters
+- `Factories/TopologyFactory.cpp` — hash-power assignment and attacker selection
+- `Scheduler.cpp` / `.h` — simulation loop and withholding/release logic
+- `ACTUAL_VAGHOST_IMPLEMENTATION.md` — implementation notes and model choices
+
+## Reference
+
+The base simulator originates from CBlockSim. This package extends it for visibility-aware fork-choice experiments.

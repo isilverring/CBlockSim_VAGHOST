@@ -2,7 +2,15 @@
 
 const std::string REGIONS_NAME[REGIONS_NUM] = { "NorthAmerica", "Europe", "SouthAmerica", "AsiaPacific", "Japan", "Australia" };
 const double REGIONS_DISTRIBUTION[REGIONS_NUM] = { 0.476, 0.222, 0, 0.297, 0.005, 0 }; //{0.2712, 0.5539, 0.0094, 0.1235, 0.0253, 0.0168};//{ 0.476, 0.222, 0, 0.297, 0.005, 0 }; // NodeTracker + Archive 2019
-
+// ^ More extreme: push most nodes to AsiaPacific
+//const double REGIONS_DISTRIBUTION[REGIONS_NUM] = {
+  //  0.20,  // NorthAmerica
+  //  0.10,  // Europe
+  //  0.0,   // SouthAmerica
+ //   0.60,  // AsiaPacific
+ //   0.10,  // Japan
+ //   0.0    // Australia
+//};
 // Latency&Bandwidth Settings
 const double LATENCIES[REGIONS_NUM][REGIONS_NUM] = { {0.032, 0.124, 0.184, 0.198, 0.151, 0.189},
 	{0.124, 0.011, 0.227, 0.237, 0.252, 0.294},
