@@ -1,6 +1,6 @@
 # CBlockSim + VA-GHOST Research Prototype
 
-This package contains a research-oriented extension of CBlockSim with a substantially tighter **VA-GHOST** implementation than the earlier chain-score approximation.
+This package contains a research-oriented extension of CBlockSim ( https://github.com/xuyangm/CBlockSim ) with a substantially tighter **VA-GHOST** implementation than the earlier chain-score approximation.
 
 ## What is implemented
 
